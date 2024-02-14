@@ -1,0 +1,2 @@
+insert into article (title, content, hashtag, created_at, created_by, modified_at, modified_by) values ('Spring Boot', 'Spring Boot is ...', '#spring', '2020-01-01 00:00:00', 'admin', '2020-01-01 00:00:00', 'admin');
+insert into article_comment (content, article_id, created_at, created_by, modified_at, modified_by) values ('Great article!', 1, '2020-01-01 00:00:00', 'admin', '2020-01-01 00:00:00', 'admin');
