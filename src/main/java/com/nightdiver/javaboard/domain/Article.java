@@ -1,7 +1,6 @@
 package com.nightdiver.javaboard.domain;
 
 import static jakarta.persistence.CascadeType.ALL;
-import static jakarta.persistence.CascadeType.REMOVE;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 import jakarta.persistence.Column;
@@ -13,7 +12,6 @@ import jakarta.persistence.Index;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -21,10 +19,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.ToString.Exclude;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Getter // 모든 필드 접근 위해
@@ -37,7 +31,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 })
 @EntityListeners(AuditingEntityListener.class) // audit 기능을 사용하기 위해
 @Entity
-public class Article {
+// embedded 대시 상속으로 구현. JPA에서 MappedSuperclass를 제공. embedded 필드 하나 둬 둠으로써 한 단계 더 들어가는 번거로움 제거
+public class Article extends AuditingFields {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
@@ -52,10 +47,6 @@ public class Article {
     @OneToMany(mappedBy = "article", cascade = ALL)
     private final Set<ArticleComment> articleComments = new LinkedHashSet<>();
 
-    @CreatedDate @Column(nullable = false) private LocalDateTime createdAt; // 생성일시
-    @CreatedBy @Column(nullable = false, length = 100) private String createdBy; // 생성자
-    @LastModifiedDate @Column(nullable = false) private LocalDateTime modifiedAt; // 수정일시
-    @LastModifiedBy @Column(nullable = false, length = 100) private String modifiedBy; // 수정자
 
     protected Article() { // JPA에서 사용하기 위해 기본 생성자 필요
     }
