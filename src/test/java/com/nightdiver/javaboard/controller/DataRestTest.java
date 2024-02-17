@@ -1,10 +1,10 @@
 package com.nightdiver.javaboard.controller;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 // @WebMvcTest // MockMvc 사용 가능. controller 관련 bean만 등록
+@Disabled("Spring Data REST 는 공부목적 제외하곤 테스트 필요없어서 Disable 처리함")
 @DisplayName("DataRest 테스트")
 @Transactional
 @AutoConfigureMockMvc // MockMvc 사용 가능
