@@ -223,4 +223,7 @@ gradle-app.setting
 ### Secrets ###
 src/main/resources/secrets.yml
 
+### Ignore QClasses in QueryDSL
+src/main/generated
+
 # End of https://www.toptal.com/developers/gitignore/api/java,gradle,intellij+all,windows,macos,visualstudiocode
