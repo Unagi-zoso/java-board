@@ -27,6 +27,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-data-rest' // 기본 rest api 제공
     implementation 'org.springframework.data:spring-data-rest-hal-explorer' // 간단하게 rest api 확인 가능. /localhost:8080/[api base path]
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf' // view
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'com.mysql:mysql-connector-j' // spring boot 3.x.x 이상 MYSQL 커넥터
     compileOnly 'org.projectlombok:lombok'
