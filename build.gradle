@@ -38,7 +38,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
     // queryDSL 설정
-    implementation 'com.querydsl:querydsl-jpa' // jpa, core 필수 의존성
+    implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta' // jpa, core 필수 의존성. spring boot 3.0.0 이상 부터 jakarta
     implementation 'com.querydsl:querydsl-core'
     implementation 'com.querydsl:querydsl-collections'
     // apt의 경우 스프링부트 3.0.0 이상 부터는 :jakarta 를 붙여줘야한다.
