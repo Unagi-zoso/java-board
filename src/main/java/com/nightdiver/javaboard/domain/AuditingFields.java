@@ -17,7 +17,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 @ToString
 @EntityListeners(AuditingEntityListener.class)
 @MappedSuperclass
-public class AuditingFields {
+public abstract class AuditingFields {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) // LocalDateTime을 문자열로 변환하기 위해
     @CreatedDate
     @Column(nullable = false, updatable = false)
