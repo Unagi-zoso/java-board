@@ -9,19 +9,22 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.nightdiver.javaboard.config.SecurityConfig;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 // @WebMvcTest // MockMvc 사용 가능. controller 관련 bean만 등록
-@Disabled("Spring Data REST 는 공부목적 제외하곤 테스트 필요없어서 Disable 처리함")
+//@Disabled("Spring Data REST 는 공부목적 제외하곤 테스트 필요없어서 Disable 처리함")
 @DisplayName("DataRest 테스트")
+@Import(SecurityConfig.class)
 @Transactional
 @AutoConfigureMockMvc // MockMvc 사용 가능
 @SpringBootTest
