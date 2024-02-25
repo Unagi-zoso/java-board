@@ -4,8 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.nightdiver.javaboard.config.JpaConfig;
 import com.nightdiver.javaboard.domain.Article;
+import com.nightdiver.javaboard.domain.UserAccount;
 import com.nightdiver.javaboard.repository.ArticleCommentRepository;
 import com.nightdiver.javaboard.repository.ArticleRepository;
+import com.nightdiver.javaboard.repository.UserAccountRepository;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,13 +24,16 @@ import org.springframework.context.annotation.Import;
 public class JpaRepositoryTest {
     private final ArticleRepository articleRepository;
     private final ArticleCommentRepository articleCommentRepository;
+    private final UserAccountRepository userAccountRepository;
 
     public JpaRepositoryTest(
             @Autowired ArticleRepository articleRepository,
-            @Autowired ArticleCommentRepository articleCommentRepository
+            @Autowired ArticleCommentRepository articleCommentRepository,
+            @Autowired UserAccountRepository userAccountRepository
     ) {
         this.articleRepository = articleRepository;
         this.articleCommentRepository = articleCommentRepository;
+        this.userAccountRepository = userAccountRepository;
     }
 
     @DisplayName("select 테스트")
@@ -50,9 +55,10 @@ public class JpaRepositoryTest {
     void givenTestData_whenInserting_thenWorksFine() {
         // Given
         long previousCount = articleRepository.count();
+        UserAccount userAccount = userAccountRepository.save(UserAccount.of("test", "test", "test", "test", "test_memo"));
 
         // When
-        articleRepository.save(Article.of("제목", "내용", "해시태그"));
+        articleRepository.save(Article.of(userAccount, "제목", "내용", "해시태그"));
 
         // Then
         assertThat(articleRepository.count()).isEqualTo(previousCount + 1);
