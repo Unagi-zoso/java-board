@@ -9,6 +9,7 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
@@ -22,7 +23,7 @@ import lombok.ToString.Exclude;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Getter // 모든 필드 접근 위해
-@ToString // 모든 필드 쉽게 출력하기 위해
+@ToString(callSuper = true) // audit 필드까지 출력하기 위해
 @Table(indexes = {
     @Index(name = "idx_article_title", columnList = "title"),
     @Index(name = "idx_article_hashtag", columnList = "hashtag"),
@@ -37,13 +38,15 @@ public class Article extends AuditingFields {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
+    @Setter @ManyToOne(optional = false) private UserAccount userAccount; // 유저 정보 (ID)
+
     @Setter @Column(nullable = false) private String title; // 제목
     @Setter @Column(nullable = false, length = 10000) private String content; // 본문
 
     @Setter private String hashtag; // 해시태그
 
     @Exclude
-    @OrderBy("id")
+    @OrderBy("createdAt DESC")
     @OneToMany(mappedBy = "article", cascade = ALL)
     private final Set<ArticleComment> articleComments = new LinkedHashSet<>();
 
@@ -51,14 +54,15 @@ public class Article extends AuditingFields {
     protected Article() { // JPA에서 사용하기 위해 기본 생성자 필요
     }
 
-    private Article(String title, String content, String hashtag) {
+    private Article(UserAccount userAccount, String title, String content, String hashtag) {
+        this.userAccount = userAccount;
         this.title = title;
         this.content = content;
         this.hashtag = hashtag;
     }
 
-    public static Article of(String title, String content, String hashtag) {
-        return new Article(title, content, hashtag);
+    public static Article of(UserAccount userAccount, String title, String content, String hashtag) {
+        return new Article(userAccount, title, content, hashtag);
     }
 
     @Override

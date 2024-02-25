@@ -15,7 +15,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Getter // 모든 필드 접근 위해
-@ToString // 모든 필드 쉽게 출력하기 위해
+@ToString(callSuper = true) // audit 필드까지 출력하기 위해
 @Table(indexes = {
         @Index(name = "idx_article_comment_content", columnList = "content"),
         @Index(name = "idx_article_comment_createdBy", columnList = "createdBy"),
@@ -29,18 +29,21 @@ public class ArticleComment extends AuditingFields {
 
     // optional = false,  해당 엔티티가 반드시 연관 엔티티를 가져야 한다. 즉, 왜래키는 NUll 일 수 없다.
     @Setter @ManyToOne(optional = false) private Article article; // 게시글 id
+    @Setter @ManyToOne(optional = false) private UserAccount userAccount; // 유저 정보 (ID)
+
     @Setter @Column(nullable = false, length = 500) private String content; // 본문
 
     protected ArticleComment() {
     }
 
-    private ArticleComment(Article article, String content) {
+    private ArticleComment(Article article, UserAccount userAccount, String content) {
         this.article = article;
+        this.userAccount = userAccount;
         this.content = content;
     }
 
-    public static ArticleComment of(Article article, String content) {
-        return new ArticleComment(article, content);
+    public static ArticleComment of(Article article, UserAccount userAccount, String content) {
+        return new ArticleComment(article, userAccount, content);
     }
 
     @Override
