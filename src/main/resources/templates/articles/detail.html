@@ -13,23 +13,22 @@
 
 <body>
     <header id="header" th:replace="header :: header"></header>
-    <main class="container">
+    <main id="article-main" class="container" th:object="${article}">
         <header class="py-5 text-center">
-            <h1>게시글</h1>
+            <h1 th:text="*{title}">게시글</h1>
         </header>
 
         <div class="row g-5">
             <section class="col-md-5 col-lg-4 order-md-last">
                 <aside>
-                    <p><span>duckduck</span></p>
-                    <p><a href="mailto:duckduck@gmail.com">duckduck@mail.com</a></p>
-
-                    <p><time datetime="2022-01-01T00:00:00">2022-01-01</time></p>
-                    <p><span>#java</span></p>
+                    <p><span id="nickname" th:text="*{nickname}">duckduck</span></p>
+                    <p><a id="email" href="mailto:duckduck@gmail.com"  th:text="*{email}">duckduck@mail.com</a></p>
+                    <p><time id="created-at" datetime="2022-01-01T00:00:00" th:datetime="*{createdAt}" th:text="*{#temporals.format(createdAt, 'yyyy-MM-dd')}">2022-01-01</time></p>
+                    <p><span id="hashtag" th:text="*{hashtag}">#java</span></p>
                 </aside>
             </section>
-            <article class="col-md-7 col-lg-8">
-                <pre><p>본문<br><br></p></pre>
+            <article id="article-content" class="col-md-7 col-lg-8">
+                <pre th:text="*{content}">본문<br><br></pre>
             </article>
         </div>
 
@@ -46,12 +45,12 @@
                     </div>
                 </form>
 
-                <ul class="row col-7">
-                    <li>
+                <ul id="article-comments" class="row col-7" th:remove="all-but-first">
+                    <li th:each="articleComment : ${articleComments}">
                         <div>
-                            <strong>me</strong>
-                            <small><time>2022-01-01</time></small>
-                            <p>
+                            <strong th:text="${articleComment.nickname}">me</strong>
+                            <small><time th:datetime="${articleComment.createdAt}" th:text="${#temporals.format(articleComment.createdAt, 'yyyy-MM-dd')}">2022-01-01</time></small>
+                            <p th:text="${articleComment.content}">
                                 Lorem ipsum dolor sit amet, consectetur adipiscing elit.<br>
                                 Lorem ipsum dolor sit amet
                             </p>
