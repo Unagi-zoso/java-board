@@ -6,8 +6,11 @@ import com.nightdiver.javaboard.domain.type.SearchType;
 import com.nightdiver.javaboard.dto.response.ArticleResponse;
 import com.nightdiver.javaboard.dto.response.ArticleWithCommentsResponse;
 import com.nightdiver.javaboard.service.ArticleService;
+import com.nightdiver.javaboard.service.PaginationService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
@@ -22,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class ArticleController {
     private final ArticleService articleService;
+    private final PaginationService paginationService;
 
     @GetMapping
     public String articles(
@@ -30,7 +34,10 @@ public class ArticleController {
             @PageableDefault(size = 10, sort = "createdAt", direction = DESC) Pageable pageable,
             ModelMap modelMap
     ) {
-        modelMap.addAttribute("articles", articleService.searchArticles(searchType, searchKeyword, pageable).map(ArticleResponse::from));
+        Page<ArticleResponse> articles = articleService.searchArticles(searchType, searchKeyword, pageable).map(ArticleResponse::from);
+        List<Integer> paginationBarNumbers = paginationService.getPaginationBarNumbers(articles.getTotalPages(), pageable.getPageNumber());
+        modelMap.addAttribute("articles", articles);
+        modelMap.addAttribute("paginationBarNumbers", paginationBarNumbers);
 
         return "articles/index";
     }

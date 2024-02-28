@@ -1,6 +1,7 @@
 package com.nightdiver.javaboard.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
@@ -15,7 +16,9 @@ import com.nightdiver.javaboard.dto.ArticleCommentDto;
 import com.nightdiver.javaboard.dto.ArticleWithCommentsDto;
 import com.nightdiver.javaboard.dto.UserAccountDto;
 import com.nightdiver.javaboard.service.ArticleService;
+import com.nightdiver.javaboard.service.PaginationService;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -25,7 +28,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -36,7 +41,7 @@ class ArticleControllerTest {
     private final MockMvc mockMvc;
 
     @MockBean ArticleService articleService; // 하나는 MockBean, 하나는 Autowired .. 혼종이야..
-
+    @MockBean PaginationService paginationService;
     public ArticleControllerTest(@Autowired MockMvc mockMvc) {
         this.mockMvc = mockMvc;
     }
@@ -46,14 +51,42 @@ class ArticleControllerTest {
     public void givenNothing_whenRequestingArticlesView_thenReturnsArticlesView() throws Exception {
         // given
         given(articleService.searchArticles(eq(null), eq(null), any(Pageable.class))).willReturn(Page.empty());
-
+        given(paginationService.getPaginationBarNumbers(anyInt(), anyInt())).willReturn(List.of(0, 1, 2, 3, 4));
         // when & then
         mockMvc.perform(get("/articles"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
                 .andExpect(view().name("articles/index"))
-                .andExpect(model().attributeExists("articles"));
+                .andExpect(model().attributeExists("articles"))
+                .andExpect(model().attributeExists("paginationBarNumbers"));
         then(articleService).should().searchArticles(eq(null), eq(null), any(Pageable.class));
+        then(paginationService).should().getPaginationBarNumbers(anyInt(), anyInt());
+    }
+
+    @DisplayName("[view][GET] 게시글 목록 (게시판) 페이지 - 페이징, 정렬 기능")
+    @Test
+    public void givenPagingAndSortingParams_whenSearchingArticlesPage_thenReturnsArticlesPageWithPagingAndSorting() throws Exception {
+        // given
+        String sortName = "title";
+        String direction = "desc";
+        int pageNumber = 0;
+        int pageSize = 5;
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(Sort.Order.desc(sortName)));
+        List<Integer> paginationBarNumbers = List.of(0, 1, 2, 3, 4);
+        given(articleService.searchArticles(eq(null), eq(null), eq(pageable))).willReturn(Page.empty());
+        given(paginationService.getPaginationBarNumbers(Page.empty().getTotalPages(), pageable.getPageNumber())).willReturn(paginationBarNumbers);
+        // when & then
+        mockMvc.perform(get("/articles")
+                .param("page", String.valueOf(pageNumber))
+                .param("size", String.valueOf(pageSize))
+                .param("sort", sortName + "," + direction))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
+                .andExpect(view().name("articles/index"))
+                .andExpect(model().attributeExists("articles"))
+                .andExpect(model().attributeExists("paginationBarNumbers"));
+        then(articleService).should().searchArticles(eq(null), eq(null), any(Pageable.class));
+        then(paginationService).should().getPaginationBarNumbers(Page.empty().getTotalPages(), pageable.getPageNumber());
     }
 
     @DisplayName("[view][GET] 게시글 상세 페이지 - 정상 호출")
