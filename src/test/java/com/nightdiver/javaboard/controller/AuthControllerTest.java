@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.nightdiver.javaboard.config.SecurityConfig;
 import com.nightdiver.javaboard.service.ArticleService;
+import com.nightdiver.javaboard.service.PaginationService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,7 @@ public class AuthControllerTest {
     }
 
     @MockBean ArticleService articleService;
+    @MockBean PaginationService paginationService;
 
     @DisplayName("[view][GET] 로그인 페이지 - 정상 호출")
     @Test
